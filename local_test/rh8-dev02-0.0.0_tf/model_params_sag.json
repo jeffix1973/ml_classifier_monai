@@ -1,0 +1,111 @@
+{
+    "class_monai_dcm": {
+        "instance_source_path": "local_test",
+        "root_path": "local_test",
+        "output_dir": "rh8-dev02-0.0.0_tf",
+        "run": "rh8-dev02-0.0.0_tf_sag",
+        "csv_files": [
+            [
+                "telediag-head-1",
+                "/data/BDs/TELEDIAG_HEAD/1/",
+                "HEAD",
+                "/data/BDs/TELEDIAG_HEAD/1/",
+                "1"
+            ]
+        ],
+        "test_csv_files": [
+            [
+                "telediag-head-6",
+                "/data/BDs/TELEDIAG_HEAD/6/",
+                "HEAD",
+                "/data/BDs/TELEDIAG_HEAD/6/",
+                "1"
+            ]
+        ],
+        "model_copy_path": "/data/origin/AI/bp_detection_inference_rest_api/models/mr_bp",
+        "zipped_source_files": "True",
+        "runtype": "simple",
+        "reproductible_split": "Yes",
+        "network": "DenseNet121",
+        "label_column": "OLEA_MIDDLE_SLICE_LOCATION",
+        "model_focus": "mr_bp",
+        "balanced_datasets": "false",
+        "balanced_max_factor": 1,
+        "max_series_per_class": 200,
+        "max_test_series_per_class": 50,
+        "reader": "ITKReader",
+        "nb_folds": 1,
+        "patience": 15,
+        "eval_ratio": 0.2,
+        "test_ratio": 0.0,
+        "size": [
+            128,
+            128
+        ],
+        "lr": 0.001,
+        "batch_size": 50,
+        "num_workers": 4,
+        "epochs": 100,
+        "metric_names": [
+            "roc_auc",
+            "f1_score",
+            "sensitivity",
+            "specificity",
+            "precision",
+            "accuracy"
+        ],
+        "include_bckg": "True",
+        "save_png": "False",
+        "save_nifti": "False",
+        "label_names": [
+            "BRAIN.ZONE_MIDDLE",
+            "HEAD.ZONE_MIDDLE"
+        ],
+        "inhibited_label_names": [],
+        "excluded_SIDs": [
+            [],
+            [],
+            [],
+            [],
+            [],
+            []
+        ],
+        "test_excluded_SIDs": [
+            [],
+            [],
+            [],
+            [],
+            []
+        ],
+        "orientations": [
+            "SAGITTAL"
+        ]
+    },
+    "report_publisher": {
+        "server_name": "RH8-DEV02",
+        "sidviewer_url": "http://sidviewer-dev",
+        "working_folder_path": "/data/origin/AI/report_publisher",
+        "root_path": "local_test",
+        "output_dir": "rh8-dev02-0.0.0_tf",
+        "model_name": "rh8-dev02-0.0.0_tf_sag_DenseNet121_simple",
+        "labels": [
+            "BRAIN.ZONE_MIDDLE",
+            "HEAD.ZONE_MIDDLE"
+        ],
+        "focus_labels": [
+            "BRAIN.ZONE_MIDDLE",
+            "HEAD.ZONE_MIDDLE"
+        ],
+        "metric_charts": [
+            "roc_auc",
+            "f1_score",
+            "sensitivity",
+            "specificity",
+            "precision",
+            "accuracy"
+        ]
+    },
+    "bp_detection_inference_rest_api": {
+        "DT": 0.9
+    }
+}

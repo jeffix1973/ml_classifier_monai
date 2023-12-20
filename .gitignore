@@ -1,0 +1,24 @@
+# exclude all python cache global
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude *.so
+global-exclude *.dll
+global-exclude *.dylib
+global-exclude *.bak
+global-exclude *.swp
+global-exclude *.swo
+global-exclude *.swn
+global-exclude *.un~
+global-exclude *.tmp
+__EOF__
+__pycache__
+.vscode
+.DS_Store
+
+debug/
+logs/
+
+train/
+test/
+

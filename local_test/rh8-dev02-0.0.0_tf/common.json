@@ -1,0 +1,92 @@
+{
+    "bp_detection_inference_rest_api": {
+        "default_models_for_docker": {
+            "mr_bp": [
+                "rh8-dev02-0.0.0_tf",
+                "DenseNet121",
+                "simple"
+            ],
+            "brain_gado": [
+                "brain_gado-1.0.17",
+                "DenseNet121",
+                "simple"
+            ]
+        },
+        "project_folder": "/data/origin/AI/bp_detection_inference_rest_api",
+        "DT": 0.9,
+        "model_ax": "rh8-dev02-0.0.0_tf_ax_DenseNet121_simple.pt",
+        "model_sag": "rh8-dev02-0.0.0_tf_sag_DenseNet121_simple.pt",
+        "model_cor": "rh8-dev02-0.0.0_tf_cor_DenseNet121_simple.pt",
+        "model_focus": "mr_bp",
+        "labels": [
+            "HEAD.ZONE_MOUTH",
+            "HEAD.ZONE_BRAIN",
+            "HEAD.ZONE_FACE",
+            "BRAIN.ZONE_CENTER",
+            "CAI.CAI",
+            "HEAD.ZONE_NOSE",
+            "HEAD.ZONE_CENTER",
+            "HEAD.ZONE_MIDDLE",
+            "HYPOPHYSE.HYPOPHYSE",
+            "HEAD.ZONE_EYES",
+            "BRAIN.ZONE_MIDDLE"
+        ],
+        "network": "DenseNet121"
+    },
+    "report_publisher": {
+        "root_path": "local_test",
+        "output_dir": "rh8-dev02-0.0.0_tf",
+        "server_name": "RH8-DEV02",
+        "sidviewer_url": "http://sidviewer-dev",
+        "focus_labels": [
+            [
+                "HEAD.ZONE_BRAIN",
+                "HEAD.ZONE_EYES",
+                "HEAD.ZONE_NOSE",
+                "HEAD.ZONE_MOUTH"
+            ],
+            [
+                "BRAIN.ZONE_MIDDLE",
+                "HEAD.ZONE_MIDDLE"
+            ],
+            [
+                "BRAIN.ZONE_CENTER",
+                "HEAD.ZONE_CENTER",
+                "HEAD.ZONE_FACE",
+                "CAI.CAI",
+                "HYPOPHYSE.HYPOPHYSE"
+            ]
+        ],
+        "working_folder_path": "/data/origin/AI/report_publisher",
+        "csv_files": [
+            [
+                "telediag-head-5",
+                "/data/BDs/TELEDIAG_HEAD/5/",
+                "HEAD",
+                "/data/BDs/TELEDIAG_HEAD/5/",
+                "1"
+            ]
+        ],
+        "headers": [
+            "StudyInstanceUID",
+            "SeriesInstanceUID",
+            "DetectedBP",
+            "ExpectedBP"
+        ],
+        "chapters": [
+            [
+                "Confusion Matrix",
+                "The model has been trained with a given number of classes and the output result have been recorded only when the probability of detection of a given class was above 0.9. Other output predictions have been classified as unknown detection and have not been counted in these statistics.",
+                "out/confusion_matrix.png"
+            ],
+            [
+                "ROC (Area Under the Curve)",
+                "The ROC indicator has been plot for each classes in One against all mode",
+                "out/roc_auc.png"
+            ]
+        ],
+        "labels": [
+            "HEAD"
+        ]
+    }
+}

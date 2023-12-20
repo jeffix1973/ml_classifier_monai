@@ -1,0 +1,23 @@
+name: ml_class_monai_py3.11
+
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - pydicom
+  - scikit-learn
+  - scikit-build
+  - matplotlib
+  - seaborn
+  - pip:
+    - itk
+    - boto3
+    - torch
+    - torchvision
+    - monai==1.3.0
