@@ -39,11 +39,11 @@
 		"eval_ratio": 0.2,
 		"test_ratio": 0,
 		"size": [
-			128,
-			128
+			224,
+			224
 		],
 		"lr": 0.001,
-		"batch_size": 150,
+		"batch_size": 10,
 		"num_workers": 4,
 		"epochs": 100,
 		"metric_names": [

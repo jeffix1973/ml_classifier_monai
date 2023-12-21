@@ -23,6 +23,7 @@ def run_testing(args):
     output_dir = config['output_dir']
     resize_shape = config['size']
     lr = config['lr']
+    patience = config['patience']
     batch_size = config['batch_size']
     label_names = config['label_names']
     nb_labels = len(label_names)
@@ -81,6 +82,7 @@ def run_testing(args):
     f1 = np.round(100 * f1_score(true_labels, predicted_labels, average='weighted'), 1)
     
     plt.title(f"{run_name} / {len(predicted_labels)} series\n" +
+            f"BATCH_SIZE: {batch_size} / " + f"LR: {lr} / " + f"SIZE: {resize_shape} / " + f"PATIENCE: {patience}\n"
             f"Accuracy: {accuracy}% / " +
             f"Precision: {precision}% / " +
             f"Recall: {recall}% / " +

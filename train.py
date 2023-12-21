@@ -38,6 +38,11 @@ def run_training(args):
     epochs = config['epochs']
     label_names = config['label_names']
     nb_labels = len(label_names)
+    
+    print('>>> Label_names : ', label_names)
+    label_mapping_json = {i: label for i, label in enumerate(label_names)}
+    print('>>> Label mapping : ', label_mapping_json)
+    print('>>> Nb Of Labels :', nb_labels)
 
     # Prepare output directories
     run_name = f"{config['run']}_{config['network']}_{config['runtype']}"
