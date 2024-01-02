@@ -19,5 +19,7 @@ dependencies:
     - itk
     - boto3
     - torch
+    - tensorboard
+    - tqdm
     - torchvision
     - monai==1.3.0

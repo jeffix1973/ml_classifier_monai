@@ -31,11 +31,16 @@ class DicomDataset(Dataset):
         return processed, label_tensor
 
     def _get_dcm_path(self, row):
-        join_path = "/".join(row['OLEA_INSTANCE_PATH'].split("/")[-3:])
-        dcm_path = os.path.join(self.data_root_path, join_path)
-        if not dcm_path.endswith('.dcm'):
-            dcm_path += '.dcm'
-        return dcm_path
+        
+        if self.data_root_path is not None:
+            join_path = "/".join(getattr(row, 'OLEA_INSTANCE_PATH').split("/")[-3:])
+            image_path = self.data_root_path + "/" + join_path
+            if not image_path.endswith('.dcm'):
+                image_path += '.dcm'
+        else:
+            image_path = row['OLEA_INSTANCE_PATH']
+            
+        return image_path
 
 def create_dataloaders(data_root_path, csv_file, resize_shape, batch_size, num_classes):
     df = pd.read_csv(csv_file)
