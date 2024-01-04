@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import torch.nn.functional as F
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score
+import pydicom
+from PIL import Image
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -63,7 +65,50 @@ def run_testing(args):
             _, predicted = torch.max(outputs, 1)
             predicted_labels.extend(predicted.numpy())
     
-    true_labels = pd.read_csv(running_csv)['label'].to_numpy()
+    # Load the CSV file
+    df = pd.read_csv(running_csv)
+    true_labels = df['label'].to_numpy()
+    
+    # Prepare a list to collect the paths
+    paths = []
+    # Iterate over each row in the DataFrame
+    for _, row in df.iterrows():
+        if data_root_path is not None:
+            # Extract the last three parts of the path and join with the data_root_path
+            join_path = "/".join(row['OLEA_INSTANCE_PATH'].split("/")[-3:])
+            image_path = os.path.join(data_root_path, join_path)
+            
+            # Ensure the path ends with '.dcm'
+            if not image_path.endswith('.dcm'):
+                image_path += '.dcm'
+        else:
+            # Use the OLEA_INSTANCE_PATH directly
+            image_path = row['OLEA_INSTANCE_PATH']
+        
+        # Append the path to the paths list
+        paths.append(image_path)
+        
+    # Ensure the preview folder exists
+    preview_folder = 'report_publisher/previews'
+    os.makedirs(preview_folder, exist_ok=True)
+    
+    # Flush the previews folder
+    for file in os.listdir(preview_folder):
+        os.remove(os.path.join(preview_folder, file))
+    
+    # Iterate through each prediction, load the DCM, and save as PNG if labels differ
+    for i, (true, pred) in enumerate(zip(true_labels, predicted_labels)):
+        if true != pred:  # Check if labels differ
+            dcm_path = paths[i]
+            dcm_file = pydicom.dcmread(dcm_path)  # Load the .dcm file
+            
+            # Convert Dicom to image array and normalize
+            image = dcm_file.pixel_array.astype(float)
+            image = (np.maximum(image,0) / image.max()) * 255.0
+            image = np.uint8(image)
+            
+            # Save the image array as a .png file
+            Image.fromarray(image).save(os.path.join(preview_folder, f"{os.path.basename(paths[i]).replace('.dcm', '')}.png"))
 
     # Extract the maximum probability for each prediction
     max_probs = np.max(probabilities, axis=1) * 100
@@ -99,7 +144,7 @@ def run_testing(args):
         'Path': test_df['OLEA_INSTANCE_PATH'],
         'SeriesDescription': test_df['SeriesDescription'],
         'GT': [label_mapping_json[gt] for gt in true_labels],
-        'Prediction': predicted_labels,
+        'Prediction': [label_mapping_json[pred] for pred in predicted_labels],
         'Max_Prob': np.round(max_probs, 1)
     })
     

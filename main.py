@@ -3,13 +3,14 @@ import train
 import test
 import datetime
 
+from report_publisher.model_performance_report_focused import generate
+
 def main():
     parser = argparse.ArgumentParser(description="Run training and/or testing.")
     parser.add_argument("--mode", choices=["train", "test", "both"], required=True, help="Select mode: train, test, or both.")
     parser.add_argument("--json_path", required=True, help="Path to the model_ax, sag or cor configuration file.")
     # add a boolean argument to specify whether to use local data
     parser.add_argument("--data_root_path", help="Optional : root path for local DICOM files location.")
-    
     
     args = parser.parse_args()
     
@@ -26,6 +27,11 @@ def main():
         test_duration = datetime.datetime.now() - start_time
         # print duration in hours, minutes and seconds
         print('Testing duration: {}'.format(test_duration))
+        print('Publishing reports...')
+        generate(args.json_path)
+        report_duration = datetime.datetime.now() - start_time
+        # print duration in hours, minutes and seconds
+        print('Report generation duration: {}'.format(report_duration))
 
 if __name__ == "__main__":
     main()

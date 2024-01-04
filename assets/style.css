@@ -1,0 +1,133 @@
+@font-face {
+    font-family: 'bold';
+    src: url('/data/origin/AI/report_publisher/assets/Dosis-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'regular';
+    src: url('/data/origin/AI/report_publisher/assets/Dosis-Regular.ttf');
+}
+
+/* @font-face {
+    font-family: 'bold';
+    src: url('/data/AI/report_publisher/assets/CourierPrime-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'regular';
+    src: url('/data/AI/report_publisher/assets/CourierPrime-Regular.ttf');
+} */
+
+/* GENERAL */
+
+body, p, a {
+    font-family: 'regular';
+}
+
+h1, h2, h3, h4, b {
+    font-family: 'bold';
+}
+
+/* IMAGES */
+img.logo {
+    display: inline-block;
+    width: auto;
+    height: 5em;
+    margin-top: 0.5em;
+}
+
+img.chart_full_page {
+    display: block;
+    margin: auto;
+    width: 75%;
+    height: auto;
+}
+
+.preview_wrapper {
+    display: inline-block;
+    margin: 0.1em;
+    width: 23%;
+}
+
+.preview_wrapper img {
+    display: block;
+    object-fit: cover;
+    width: 100%;
+    max-height: 180px;
+}
+
+span.detection {
+    display: block;
+    text-align: center;
+    border-radius: 0.5em;
+    font-size: 0.9em;
+    padding: 0.1em;
+}
+
+span.description {
+    display: block;
+    font-size: 0.7em;
+    text-align: center;
+}
+
+.red {
+    background-color: red;
+    color: #FFFFFF;
+}
+
+.orange {
+    background-color: orange;
+    color: #FFFFFF;
+}
+
+.green {
+    background-color: green;
+    color: #FFFFFF;
+}
+
+.preview_wrapper a {
+    font-family: 'bold';
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+    font-size: 0.8em;
+    padding: 0.2em;
+}
+
+img.chart_half_page {
+    display: inline-block;
+    margin-right: 1em;
+    margin-bottom: 0.5em;
+    width: 49%;
+    margin: auto;
+    height: auto;
+}
+
+/* TITLE */
+.report_title {
+    display: inline-block;
+}
+
+.report_title span.title {
+    font-size: 3em;
+    font-family: 'bold';
+    padding-left: 1em;
+    vertical-align: center;
+}
+
+.report_title span.sub_title {
+    font-size: 1em;
+    display: block;
+    padding-left: 2.5em;
+    font-style: italic;
+}
+
+.stats b {
+    font-size: 1.2em;
+}
+
+/* SPECIAL */
+.new-page {
+    page-break-before: always;
+}

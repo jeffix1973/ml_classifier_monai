@@ -19,6 +19,7 @@ __pycache__
 debug/
 logs/
 models/
+report_publisher/previews/
 
 train/
 test/
