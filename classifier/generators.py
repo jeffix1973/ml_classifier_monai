@@ -25,7 +25,7 @@ class DicomDataset(Dataset):
         label = int(row['label'])
 
         # Load and preprocess the image
-        _, processed = preprocessing.preprocess_pipeline(dcm_path, self.resize_shape, self.mode)
+        _, processed, _ = preprocessing.preprocess_pipeline(dcm_path, self.resize_shape, self.mode)
 
         label_tensor = torch.tensor(label, dtype=torch.long)
         return processed, label_tensor

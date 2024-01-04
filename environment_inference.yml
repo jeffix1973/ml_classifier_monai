@@ -1,0 +1,17 @@
+name: ml_class_monai_inference_py3.11
+
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+    - flask
+    - gunicorn
+    - pydicom
+    - torch
+    - torchvision
+    - monai==1.3.0

@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import pydicom
 from PIL.Image import fromarray
+import matplotlib.pyplot as plt
 
 
 def export_image(path, export_dir):
@@ -82,3 +83,45 @@ def load_json(path):
     print('>>>> Variables have been successfuly loaded...')
     
     return VAR, VAR2
+
+def load_common_json(path):
+    print('>>>> Loading', path)
+    try:
+        f = open(path, "r")
+    except:
+        print('File does not exist. The program has been stopped...')
+        sys.exit(0)
+    
+    # STEP 2 : Collect JSON variables
+    file = json.load(f)
+    VAR = file['bp_detection_inference_rest_api']
+    VAR2 = file['report_publisher']
+    print('>>>> Variables have been successfuly loaded...')
+    
+    return VAR, VAR2
+
+
+def plot_results(train_losses, train_accuracies, val_losses, val_accuracies, train_output_dir):
+    # Plotting accuracy and loss curves
+    plt.figure(figsize=(12, 5))
+
+    # Accuracy curve
+    plt.subplot(1, 2, 1)
+    plt.plot(train_accuracies)
+    plt.plot(val_accuracies)
+    plt.title('Model Accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+
+    # Loss curve
+    plt.subplot(1, 2, 2)
+    plt.plot(train_losses)
+    plt.plot(val_losses)
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+
+    plt.savefig(os.path.join(train_output_dir,'training_curves.png'))
+    print("Plots training_curves.png saved to", train_output_dir)

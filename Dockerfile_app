@@ -1,0 +1,12 @@
+FROM cnn_monai_1.3_inference
+
+COPY models/* ./models/
+
+COPY app.py ./
+COPY app_loadrun_models.py ./
+COPY classifier/preprocessing.py ./classifier/
+
+COPY templates/* ./templates/
+
+EXPOSE 5000
+CMD ["gunicorn", "-w", "1", "--threads", "1", "--bind", "0.0.0.0:5000", "app:app"]

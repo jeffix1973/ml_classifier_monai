@@ -1,0 +1,9 @@
+#Docker file to create a base image cnn_inference_monai with python 3.11 and all required dependencies
+FROM python:3.11-slim-bullseye
+
+WORKDIR /app
+COPY requirements.txt /app
+
+RUN pip install -r requirements.txt
+
+EXPOSE 5000

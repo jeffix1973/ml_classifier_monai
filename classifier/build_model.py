@@ -14,39 +14,6 @@ def create_monai_densenet(num_classes, lr):
 
     return model, optimizer
 
-# Custom Dense Model
-def CustomDenseModel(num_classes, lr, resize_shape):
-    class CustomDenseNet(nn.Module):
-        def __init__(self, num_classes):
-            super(CustomDenseNet, self).__init__()
-            # Define your custom architecture here
-            # Example:
-            self.features = nn.Sequential(
-                nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3),
-                nn.BatchNorm2d(64),
-                nn.ReLU(),
-                nn.MaxPool2d(kernel_size=3, stride=2),
-                # Add more layers as needed...
-            )
-            self.classifier = nn.Sequential(
-                nn.Linear(1024, 512),
-                nn.ReLU(),
-                nn.Dropout(0.2),
-                nn.Linear(512, num_classes),
-                nn.Sigmoid() if num_classes == 2 else nn.Softmax(dim=1)
-            )
-
-        def forward(self, x):
-            x = self.features(x)
-            x = torch.flatten(x, 1)
-            x = self.classifier(x)
-            return x
-
-    model = CustomDenseNet(num_classes)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-
-    return model, optimizer
-
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
@@ -78,7 +45,16 @@ class EarlyStopping:
 
     def save_checkpoint(self, val_loss, model, epoch):
         '''Saves model when validation loss decreases.'''
+        # Check for the number of GPUs
+        if torch.cuda.device_count() > 1:
+            # Save the original model when model is wrapped with nn.DataParallel
+            model_to_save = model.module.state_dict()
+        else:
+            # Save the entire model directly
+            model_to_save = model.state_dict()
+        
+        # Save the model
+        torch.save(model_to_save, self.path)
         if self.verbose:
             print(f'Validation loss decreased at epoch {epoch}: {self.val_loss_min:.6f} --> {val_loss:.6f}. Saving model...')
-        torch.save(model.state_dict(), self.path)
         self.val_loss_min = val_loss

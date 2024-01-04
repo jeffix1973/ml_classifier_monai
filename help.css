@@ -1,0 +1,32 @@
+body {
+    color: black;
+    padding: 5em 0em;
+    margin: auto;
+    font-family: "Gill Sans", sans-serif;
+    max-width: 60%;
+ }
+ 
+ h1 {
+    border-bottom: 1px solid grey;
+    color: grey;
+ }
+ 
+ h2 {
+    color: grey;
+ }
+ 
+ blockquote p {
+    background-color: #fefefe;
+    color: #666666;
+    border-left: 5px solid grey;
+    padding: 1em;
+ }
+ 
+ code {
+    display: block;
+    max-width: 75% !important;
+ 
+    overflow-wrap: break-word !important;
+ }
+ 
+ 

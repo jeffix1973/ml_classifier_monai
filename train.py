@@ -1,4 +1,5 @@
 import os
+import json
 import torch
 import datetime
 
@@ -10,9 +11,11 @@ from tqdm import tqdm
 
 # Framework imports
 import classifier.utils as utils
+import classifier.debug as debug
 import classifier.generators as generators
 import classifier.preprocessing as preprocessing
 import classifier.build_model as build_model
+
 # import early_stopping class from classifier/build_model.py
 from classifier.build_model import EarlyStopping
 
@@ -26,7 +29,7 @@ def run_training(args):
     # Load configuration file
     json_path = args.json_path
     data_root_path = args.data_root_path
-    config, _ = utils.load_json(json_path)
+    config, config2 = utils.load_json(json_path)
 
     # Extract configurations
     root_path = config['root_path']
@@ -38,6 +41,10 @@ def run_training(args):
     epochs = config['epochs']
     label_names = config['label_names']
     nb_labels = len(label_names)
+    
+    # prediction params
+    DT = config2['DT']
+    network = config['network']
     
     print('>>> Label_names : ', label_names)
     label_mapping_json = {i: label for i, label in enumerate(label_names)}
@@ -52,7 +59,7 @@ def run_training(args):
     # Debug data augmentation
     running_csv = os.path.join(root_path, output_dir, "out", run_name, "split", "db.csv")
     print("Debugging data augmentation...")
-    preprocessing.debug_dataset_images(data_root_path, running_csv, resize_shape, 20)
+    debug.debug_dataset_images(data_root_path, running_csv, resize_shape, 20)
     print("Debugging done, see folder /tmp/debug_images/ for results.")
 
     # Create Data Loaders
@@ -66,6 +73,11 @@ def run_training(args):
 
     # Model Initialization
     model, optimizer = build_model.create_monai_densenet(nb_labels, lr)
+    # use gpu if available
+    if torch.cuda.device_count() > 1:
+        print(f"Let's use {torch.cuda.device_count()} GPUs!")
+        model = torch.nn.DataParallel(model)
+    model = model.to(device)
 
     # Loss function
     criterion = torch.nn.CrossEntropyLoss()
@@ -78,6 +90,12 @@ def run_training(args):
     # Instantiate EarlyStopping class
     early_stopping = EarlyStopping(patience=patience, verbose=True, path=os.path.join(train_output_dir, 'best_model.pth'))
 
+    # Initialize lists to hold the tracking of loss and accuracy for train and validation
+    train_losses = []
+    train_accuracies = []
+    val_losses = []
+    val_accuracies = []
+
     # Training and Validation Loop
     for epoch in range(epochs):
         model.train()
@@ -85,6 +103,8 @@ def run_training(args):
 
         with tqdm(train_loader, desc=f"Training Epoch {epoch + 1}/{epochs}") as train_bar:
             for inputs, targets in train_bar:
+                # move data to device
+                inputs, targets = inputs.to(device), targets.to(device)
                 optimizer.zero_grad()
                 outputs = model(inputs)
                 loss = criterion(outputs, targets)
@@ -105,6 +125,8 @@ def run_training(args):
         train_accuracy = 100 * total_correct / total_samples
         writer.add_scalar('Loss/Train', average_train_loss, epoch)
         writer.add_scalar('Accuracy/Train', train_accuracy, epoch)
+        train_losses.append(average_train_loss)
+        train_accuracies.append(train_accuracy)
         print(f"Epoch [{epoch + 1}/{epochs}], Loss: {average_train_loss}, Accuracy: {train_accuracy:.2f}%")
 
         # Validation
@@ -113,6 +135,7 @@ def run_training(args):
         with tqdm(val_loader, desc=f"Validation Epoch {epoch + 1}/{epochs}") as val_bar:
             with torch.no_grad():
                 for inputs, targets in val_bar:
+                    inputs, targets = inputs.to(device), targets.to(device)
                     outputs = model(inputs)
                     loss = criterion(outputs, targets)
                     val_loss += loss.item()
@@ -128,6 +151,8 @@ def run_training(args):
         val_accuracy = 100 * val_total_correct / val_total_samples
         writer.add_scalar('Loss/Validation', average_val_loss, epoch)
         writer.add_scalar('Accuracy/Validation', val_accuracy, epoch)
+        val_losses.append(average_val_loss)
+        val_accuracies.append(val_accuracy)
         print(f"Validation Loss: {average_val_loss}, Accuracy: {val_accuracy:.2f}%")
         
         # Early stopping and checkpoint saving
@@ -138,5 +163,21 @@ def run_training(args):
 
     writer.close()
     print(f"Best model saved to {os.path.join(train_output_dir, 'best_model.pth')}")
+    
+    # Plotting accuracy and loss curves
+    utils.plot_results(train_losses, train_accuracies, val_losses, val_accuracies, train_output_dir)
+
+    # Save config file
+    config = {
+        "model_name": run_name,
+        "labels": label_names,
+        "DT": DT,
+        "network": network,
+        "resize_shape": resize_shape
+    }
+    
+    with open(os.path.join(train_output_dir, 'model_config.json'), 'w') as fp:
+        json.dump(config, fp, indent=4)
+    print("Label mapping saved to", os.path.join(train_output_dir, 'model_config.json'))
 
     pass
