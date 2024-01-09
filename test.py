@@ -18,7 +18,9 @@ def run_testing(args):
     # Load configuration and model
     json_path = args.json_path
     data_root_path = args.data_root_path
-    config, _ = utils.load_json(json_path)
+    
+    CONF = utils.load_json(json_path)
+    config = CONF['class_monai_dcm']
     
     # Extract configurations
     root_path = config['root_path']

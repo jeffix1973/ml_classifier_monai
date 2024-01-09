@@ -29,7 +29,9 @@ def run_training(args):
     # Load configuration file
     json_path = args.json_path
     data_root_path = args.data_root_path
-    config, config2 = utils.load_json(json_path)
+    CONF = utils.load_json(json_path)
+    config = CONF['class_monai_dcm']
+    config2 = CONF['bp_detection_inference_rest_api']
 
     # Extract configurations
     root_path = config['root_path']

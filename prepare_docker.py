@@ -10,8 +10,11 @@ def main():
     args = parser.parse_args()
     
     json_path = args.json_path
-    config, config2 = utils.load_common_json(json_path)
-    
+
+    CONF = utils.load_json(json_path)
+    config = CONF['bp_detection_inference_rest_api']
+    config2 = CONF['report_publisher']
+        
     # Extract configurations
     root_path = config2['root_path']
     output_dir = config2['output_dir']

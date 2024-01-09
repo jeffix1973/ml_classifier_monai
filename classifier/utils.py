@@ -66,7 +66,7 @@ def create_dir(path):
         print(">>> Directory created: ", path)
     else:
         print(">>> Directory already exists: ", path)
-        
+
 
 def load_json(path):
     print('>>>> Loading', path)
@@ -77,28 +77,10 @@ def load_json(path):
         sys.exit(0)
     
     # STEP 2 : Collect JSON variables
-    file = json.load(f)
-    VAR = file['class_monai_dcm']
-    VAR2 = file['bp_detection_inference_rest_api']
+    CONF = json.load(f)
     print('>>>> Variables have been successfuly loaded...')
     
-    return VAR, VAR2
-
-def load_common_json(path):
-    print('>>>> Loading', path)
-    try:
-        f = open(path, "r")
-    except:
-        print('File does not exist. The program has been stopped...')
-        sys.exit(0)
-    
-    # STEP 2 : Collect JSON variables
-    file = json.load(f)
-    VAR = file['bp_detection_inference_rest_api']
-    VAR2 = file['report_publisher']
-    print('>>>> Variables have been successfuly loaded...')
-    
-    return VAR, VAR2
+    return CONF      
 
 
 def plot_results(train_losses, train_accuracies, val_losses, val_accuracies, train_output_dir):
