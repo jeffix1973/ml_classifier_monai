@@ -23,6 +23,8 @@ python prepare_docker.py --json_path <path_to_common_json_file>
 
 ## Run image
 >$ docker run --rm -p 5000:5000 -v /data/BDs/:/dicom --name mr_bp_monai_test mr_bp_monai_test
+on a different port, change number of workers and/or threads
+>$ docker run --rm -e PORT=5001 -e WORKERS=4 -e THREADS=2 -p 5001:5001 -v /data/BDs/:/dicom --name mr_bp_monai_test mr_bp_monai_test
 
 # Testing locally with Curl
 ## AX Model
@@ -43,7 +45,7 @@ curl -X POST http://localhost:5000/cor -H "Content-Type: application/json" -d '{
 ## Typical response
 ```
 {
-  "ModelName": "models/model_ax",
+  "ModelName": "model_name",
   "Predictions": {
     "ModelOutputClasses": [
       "HEAD.ZONE_BRAIN",
