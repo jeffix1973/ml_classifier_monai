@@ -91,7 +91,7 @@ def run_testing(args):
         paths.append(image_path)
         
     # Ensure the preview folder exists
-    preview_folder = 'report_publisher/previews'
+    preview_folder = os.path.join(test_output_dir, 'previews')
     os.makedirs(preview_folder, exist_ok=True)
     
     # Flush the previews folder
@@ -102,6 +102,11 @@ def run_testing(args):
     for i, (true, pred) in enumerate(zip(true_labels, predicted_labels)):
         if true != pred:  # Check if labels differ
             dcm_path = paths[i]
+            # Check file and extension
+            # dcm_path = utils.check_file_and_extension(dcm_path)
+            if dcm_path is None:
+                print(f"Could not find file {paths[i]}...")
+                continue
             dcm_file = pydicom.dcmread(dcm_path)  # Load the .dcm file
             
             # Convert Dicom to image array and normalize
@@ -109,9 +114,16 @@ def run_testing(args):
             image = (np.maximum(image,0) / image.max()) * 255.0
             image = np.uint8(image)
             
+            # Convert array to PIL Image, then resize and keep aspect ratio
+            pil_image = Image.fromarray(image)
+            pil_image.thumbnail((128, 128))
+            
             # Save the image array as a .png file
-            Image.fromarray(image).save(os.path.join(preview_folder, f"{os.path.basename(paths[i]).replace('.dcm', '')}.png"))
-
+            if os.path.basename(paths[i]).endswith('.dcm'):
+                pil_image.save(os.path.join(preview_folder, f"{os.path.basename(paths[i]).replace('.dcm', '')}.png"))
+            else:
+                pil_image.save(os.path.join(preview_folder, f"{os.path.basename(paths[i])}.png")) 
+            
     # Extract the maximum probability for each prediction
     max_probs = np.max(probabilities, axis=1) * 100
     

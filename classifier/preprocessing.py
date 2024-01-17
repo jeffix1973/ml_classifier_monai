@@ -20,23 +20,25 @@ def preprocess_pipeline(dcm_path, resize_shape, mode):
 
     # Make a copy of the original image tensor for augmentation
     augmented_img = img_tensor.clone()
-
-    # Scale intensity
+    
+    # Common pre-proc definitions
     scale_intensity = ScaleIntensity()
+    normalize_intensity = NormalizeIntensity(channel_wise=True)
+    resize_transform = Resize(spatial_size=resize_shape, mode="bilinear", align_corners=True)
+    
+    # Normalize intensity
+    augmented_img = normalize_intensity(augmented_img)
+    # Scale intensity
     img_tensor = scale_intensity(img_tensor)
-
+    
     # Apply MONAI augmentations only on train images
     if mode == 'train':
         augmented_img = apply_augmentation(augmented_img)
 
     # Resize images
-    resize_transform = Resize(resize_shape, antialias=True)
     img_tensor = resize_transform(img_tensor)
     augmented_img = resize_transform(augmented_img)
-    # Normalize intensity
-    normalize_intensity = NormalizeIntensity()
-    augmented_img = normalize_intensity(augmented_img)
-    
+
     return img_tensor, augmented_img, uids
 
 
@@ -56,17 +58,17 @@ def apply_augmentation(image_tensor):
 
     # Define augmentations
     augmentations = Compose([
-        # RandFlip(prob=0.3, spatial_axis=0),  # Flip along height axes
-        # RandFlip(prob=0.3, spatial_axis=1),  # Flip along width axes
-        RandRotate(range_x=np.pi/12, prob=0.3),
-        RandZoom(min_zoom=0.9, max_zoom=1.1, prob=0.3),
-        RandAdjustContrast(gamma=(0.9, 1.1), prob=0.3),
+        RandZoom(min_zoom=1, max_zoom=1.5, prob=0.3),
+        RandFlip(prob=0.3),
+        # RandRotate(range_x=np.pi/12, prob=0.3),
+        RandAdjustContrast(prob=0.3),
         RandGaussianNoise(prob=0.3),
     ])
 
     augmented_img = augmentations(image_tensor)
     
     return augmented_img
+    # return image_tensor
 
 
 

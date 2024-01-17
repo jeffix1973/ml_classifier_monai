@@ -52,7 +52,7 @@ img.chart_full_page {
 .preview_wrapper img {
     display: block;
     object-fit: cover;
-    width: 100%;
+    width: auto;
     max-height: 180px;
 }
 

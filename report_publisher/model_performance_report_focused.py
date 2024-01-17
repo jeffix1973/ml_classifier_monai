@@ -106,11 +106,13 @@ def generate(path):
                 if os.path.normpath(csv_file[1]) == dicom_directory_path:
                     database = csv_file[0]
                     break  # Found the matching database, no need to continue the loop
-
-            # Build the preview filename and path
-            preview_filename = os.path.basename(full_path).replace('.dcm', '.png')
-            current_dir = os.path.dirname(os.path.realpath(__file__))
-            preview_path = os.path.join(current_dir, 'previews', preview_filename)
+     
+            # Build preview path
+            if os.path.basename(full_path).endswith('.dcm'): 
+                preview_filename = os.path.basename(full_path).replace('.dcm', '.png')
+            else:
+                preview_filename = os.path.basename(full_path) + '.png'
+            preview_path = os.path.join(root_path, output_dir, "out", model_name, "test", "previews", preview_filename)
 
             # Determine if prediction is valid
             valid = str(test_results.loc[i, 'GT']) == str(test_results.loc[i, 'Prediction'])
@@ -275,7 +277,8 @@ def printPDF(focus_labels, server_name, root_path, output_dir, log, working_fold
         '--margin-bottom' : '20mm',
         '--margin-left' : '15mm',
         '--margin-right' : '15mm',
-        '--enable-local-file-access': None,
+        '--page-size' : 'A4',
+        '--enable-local-file-access' : None,
         '--header-html' : 'assets/header.html',
         '--footer-html' : 'assets/footer.html'
     }
@@ -284,7 +287,7 @@ def printPDF(focus_labels, server_name, root_path, output_dir, log, working_fold
     test_and_create_dir(os.path.join(root_path, output_dir,'out', 'reports'))
     pdf_file_name = os.path.join(root_path, output_dir, 'out', 'reports', model_name + '_performance_report_focused.pdf')
     
-    pdfkit.from_file(html_file_name, pdf_file_name, options=options)
+    pdfkit.from_file(html_file_name, pdf_file_name, options=options, verbose=True)
 
     print('>>>> Model performance report', pdf_file_name, 'has been generated...')
 
