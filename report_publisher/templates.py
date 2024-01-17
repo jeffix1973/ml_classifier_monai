@@ -99,10 +99,10 @@ def performance_report(server_name, root_path, output_dir, working_folder_path, 
                 text('Series distribution in the training dataset:')
             for i in range(len(labels)):
                 doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'split', 'label_' + str(i) + '.png'), klass="chart_half_page")
-            with tag('p', klass="new-page"):
-                text('Model metrics curves:')
-            for i in range(len(metric_charts)):
-                doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', str(metric_charts[i]) + '.png'), klass="chart_half_page")
+            # with tag('p', klass="new-page"):
+            #     text('Model metrics curves:')
+            # for i in range(len(metric_charts)):
+            #     doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', str(metric_charts[i]) + '.png'), klass="chart_half_page")
     
     return doc
 
@@ -223,7 +223,7 @@ def focused_performance_report(focus_labels, server_name, root_path, output_dir,
                 doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'split', 'label_' + str(i) + '.png'), klass="chart_half_page")
             with tag('p', klass="new-page"):
                 text('Model metrics curves:')
-            for i in range(len(metric_charts)):
-                doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', str(metric_charts[i]) + '.png'), klass="chart_half_page")
-    
+            # for i in range(len(metric_charts)):
+            #     doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', str(metric_charts[i]) + '.png'), klass="chart_half_page")
+                doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', 'training_curves.png'))
     return doc 
