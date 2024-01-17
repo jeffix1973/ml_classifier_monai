@@ -101,7 +101,7 @@ def generate(path):
 
             # Get the database name corresponding to this DICOM directory
             database = ''
-            dicom_directory_path = '/'.join(path_parts[:-2])  # Get the directory path excluding instance UID
+            dicom_directory_path = '/'.join(path_parts[:-3])  # Get the directory path excluding instance UID
             for csv_file in csv_files:
                 if os.path.normpath(csv_file[1]) == dicom_directory_path:
                     database = csv_file[0]
