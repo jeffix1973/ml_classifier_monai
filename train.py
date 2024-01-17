@@ -24,6 +24,9 @@ def run_training(args):
     
     print_config()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch.manual_seed(0)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
     set_determinism(seed=0)
     
     # Load configuration file

@@ -50,7 +50,7 @@ def create_dataloaders(data_root_path, csv_file, resize_shape, batch_size, num_c
     train_dataset = DicomDataset(data_root_path, 'train', df_train, resize_shape, num_classes)
     val_dataset = DicomDataset(data_root_path, 'eval', df_val, resize_shape, num_classes)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
     return train_loader, val_loader
