@@ -87,3 +87,33 @@ $ conda env create -f environment.yml
 4) The results are exported in <path_to_working_dir>/out and the name of the report is labeled as:
 global_sid_contextual_performance_report.pdf and then copied to /data/AI/datasets/out/reports
 
+# Docker Slim
+https://slimtoolkit.org/install/
+
+```
+cd /tmp
+curl -O https://downloads.dockerslim.com/releases/1.40.6/dist_linux.tar.gz
+tar -xzvf dist_linux.tar.gz
+```
+This unzip :
+dist_linux/slim-sensor
+dist_linux/slim
+dist_linux/docker-slim
+
+Move to bin:
+```
+sudo mv /tmp/dist_linux/slim-sensor /usr/local/bin
+sudo mv /tmp/dist_linux/slim /usr/local/bin
+sudo mv /tmp/dist_linux/docker-slim /usr/local/bin
+```
+Check
+```
+slim-sensor --version
+slim --version
+docker-slim --version
+```
+Ensure expect command is installed (RedHat)
+```
+sudo yum update
+sudo yum install expect -y
+```
