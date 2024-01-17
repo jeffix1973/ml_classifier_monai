@@ -24,7 +24,7 @@ def preprocess_pipeline(dcm_path, resize_shape, mode):
     # Common pre-proc definitions
     scale_intensity = ScaleIntensity()
     normalize_intensity = NormalizeIntensity(channel_wise=True)
-    resize_transform = Resize(spatial_size=resize_shape, mode="bilinear", align_corners=True)
+    resize_transform = Resize(resize_shape, antialias =True)
     
     # Normalize intensity
     augmented_img = normalize_intensity(augmented_img)
