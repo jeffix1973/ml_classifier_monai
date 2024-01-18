@@ -14,7 +14,7 @@ import os
 import sys
 import json
 
-from templates import performance_report
+from report_publisher.templates import performance_report
 
 doc, tag, text, line = Doc().ttl()
 
@@ -68,7 +68,7 @@ def generate(path):
     FN_img_links = []
 
     # Read result file
-    path2csv = os.path.join(root_path, output_dir, "out", model_name, "test", "test_results.csv")
+    path2csv = os.path.join(root_path, output_dir, "out", model_name, "test", "results.csv")
     # Read JSON log file
     path2json = os.path.join(root_path, output_dir, "out", model_name, 'log.json')
     log = {}
@@ -90,44 +90,83 @@ def generate(path):
         print(test_results.head())
 
         for i in range(len(test_results)):
-
-            # Analyse path and separate study/series/instance.dcm from rest on the chain
-            dicom_file_fragmented = str(test_results.loc[i, 'Path']).split('/')
-            dicom_directory_fragmented = str(test_results.loc[i, 'Path']).split('/')
-
-            for j in range(len(str(test_results.loc[i, 'Path']).split('/')) - 3):
-                dicom_file_fragmented.pop(0)
-            dicom_file_path = '/'.join(dicom_file_fragmented)
-
-            for j in range(3):
-                dicom_directory_fragmented.pop(len(dicom_directory_fragmented)-1)
-            dicom_directory_path = '/'.join(dicom_directory_fragmented)
-
-            # Get the database name corresponding to this DICOM diretory
+            
+            # Build paths
+            full_path = str(test_results.loc[i, 'Path'])
+            path_parts = full_path.split('/')
+            StudyInstanceUID = path_parts[-3]
+            
+            # Get the database name corresponding to this DICOM directory
             database = ''
-            for i1 in range(len(csv_files)):
-                if os.path.normpath(csv_files[i1][1]) == dicom_directory_path:
-                    database = csv_files[i1][0]
-                    
-            # Extract Study and series UID from extracted chain
-            StudyInstanceUID = str(dicom_file_path).split('/')[0]
-            SeriesInstanceUID = str(dicom_file_path).split('/')[1]
-
-            if str(test_results.loc[i, 'GT']) == str(test_results.loc[i, 'Prediction']):
-                valid = True
+            dicom_directory_path = '/'.join(path_parts[:-3])  # Get the directory path excluding instance UID
+            for csv_file in csv_files:
+                if os.path.normpath(csv_file[1]) == dicom_directory_path:
+                    database = csv_file[0]
+                    break  # Found the matching database, no need to continue the loop
+            
+            # Build preview path
+            if os.path.basename(full_path).endswith('.dcm'): 
+                preview_filename = os.path.basename(full_path).replace('.dcm', '.png')
             else:
-                valid = False
+                preview_filename = os.path.basename(full_path) + '.png'
+            preview_path = os.path.join(root_path, output_dir, "out", model_name, "test", "previews", preview_filename)
+
+            # Determine if prediction is valid
+            valid = str(test_results.loc[i, 'GT']) == str(test_results.loc[i, 'Prediction'])
             total_count += 1
 
-            if valid == False:
+            if not valid:
                 # Append failed detection case
-                detection = str(test_results.loc[i, 'GT']) + ' >> ' + str(test_results.loc[i, 'Prediction']) + '@' + str(test_results.loc[i, 'Max_Prob']) + '%'
-                FN_links.append((str(test_results.loc[i, 'SeriesDescription']),
-                    sidviewer_url + '/#/datatable/' + database + '/FullSIDStatistics-' + StudyInstanceUID, detection))
-                FN_img_links.append(
-                #os.path.join(root_path, output_dir, 'data', database, 'preview', StudyInstanceUID, SeriesInstanceUID, 'middleImg.jpg')
-                os.path.join(root_path, 'data', database, 'preview', StudyInstanceUID, SeriesInstanceUID, 'middleImg.jpg')
-                )
+                detection = f"{test_results.loc[i, 'GT']} >> {test_results.loc[i, 'Prediction']}@{test_results.loc[i, 'Max_Prob']}%"
+                series_description = str(test_results.loc[i, 'SeriesDescription'])
+                sidviewer_link = f"{sidviewer_url}/#/datatable/{database}/FullSIDStatistics-{StudyInstanceUID}"
+
+                FN_links.append((
+                    series_description,  # Series Description
+                    sidviewer_link,  # Sidviewer URL
+                    detection,  # Detection Details
+                    preview_path,  # Preview Image Path
+                    test_results.loc[i, 'Max_Prob']))  # Max Probability
+
+                FN_img_links.append(preview_path)  # New Simplified Preview Path            
+
+            # # Analyse path and separate study/series/instance.dcm from rest on the chain
+            # dicom_file_fragmented = str(test_results.loc[i, 'Path']).split('/')
+            # dicom_directory_fragmented = str(test_results.loc[i, 'Path']).split('/')
+
+            # for j in range(len(str(test_results.loc[i, 'Path']).split('/')) - 3):
+            #     dicom_file_fragmented.pop(0)
+            # dicom_file_path = '/'.join(dicom_file_fragmented)
+
+            # for j in range(3):
+            #     dicom_directory_fragmented.pop(len(dicom_directory_fragmented)-1)
+            # dicom_directory_path = '/'.join(dicom_directory_fragmented)
+
+            # # Get the database name corresponding to this DICOM diretory
+            # database = ''
+            # for i1 in range(len(csv_files)):
+            #     if os.path.normpath(csv_files[i1][1]) == dicom_directory_path:
+            #         database = csv_files[i1][0]
+                    
+            # # Extract Study and series UID from extracted chain
+            # StudyInstanceUID = str(dicom_file_path).split('/')[0]
+            # SeriesInstanceUID = str(dicom_file_path).split('/')[1]
+
+            # if str(test_results.loc[i, 'GT']) == str(test_results.loc[i, 'Prediction']):
+            #     valid = True
+            # else:
+            #     valid = False
+            # total_count += 1
+
+            # if valid == False:
+            #     # Append failed detection case
+            #     detection = str(test_results.loc[i, 'GT']) + ' >> ' + str(test_results.loc[i, 'Prediction']) + '@' + str(test_results.loc[i, 'Max_Prob']) + '%'
+            #     FN_links.append((str(test_results.loc[i, 'SeriesDescription']),
+            #         sidviewer_url + '/#/datatable/' + database + '/FullSIDStatistics-' + StudyInstanceUID, detection))
+            #     FN_img_links.append(
+            #     #os.path.join(root_path, output_dir, 'data', database, 'preview', StudyInstanceUID, SeriesInstanceUID, 'middleImg.jpg')
+            #     os.path.join(root_path, 'data', database, 'preview', StudyInstanceUID, SeriesInstanceUID, 'middleImg.jpg')
+            #     )
         
         print('>>> ', len(FN_links), ' failed detections / ', total_count, 'tested images')
         expected = np.asarray(test_results['GT'])
@@ -178,6 +217,7 @@ def generate(path):
     
         ## CONFUSION MATRIX
         #sns.heatmap(conf_matrix, annot=True)
+        plt.clf()
         sns.heatmap(conf_matrix, annot=True, cmap="Blues", fmt="", xticklabels=sorted(labels), yticklabels=sorted(labels))
         plt.title('Test results / ' + str(len(test_results)) + ' series' + 
                 '\nAccuracy={} / Precision={} / F1Score={}'.format(accuracy, precision, f1score))
@@ -272,7 +312,7 @@ def printPDF(server_name, root_path, output_dir, log, working_folder_path, model
     test_and_create_dir(os.path.join(root_path, output_dir,'out', 'reports'))
     pdf_file_name = os.path.join(root_path, output_dir, 'out', 'reports', model_name + '_performance_report.pdf')
     
-    pdfkit.from_file(html_file_name, pdf_file_name, options=options)
+    pdfkit.from_file(html_file_name, pdf_file_name, options=options, verbose=True)
 
     print('>>>> Model performance report', pdf_file_name, 'has been generated...')
 

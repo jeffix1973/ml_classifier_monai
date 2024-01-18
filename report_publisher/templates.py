@@ -1,11 +1,9 @@
 import os
 from yattag import Doc
-from yattag import indent
-
-doc, tag, text, line = Doc().ttl()
-
 
 def performance_report(server_name, root_path, output_dir, working_folder_path, model_name, labels, metric_charts, log, total_count, FN_links, FN_img_links, failed_expected_labels, failed_expected_counters, failed_detected_labels, failed_detected_counters):
+    
+    doc, tag, text, line = Doc().ttl()
     
     doc.asis('<!DOCTYPE html>')
     with tag('html'):
@@ -15,7 +13,7 @@ def performance_report(server_name, root_path, output_dir, working_folder_path, 
             # header
             doc.stag('img', src=os.path.join(working_folder_path, 'img/logo.png'), klass="logo")
             with tag('div', klass="report_title"):
-                line('span', 'Model Performance Report', klass="title")
+                line('span', 'Performance Report', klass="title")
                 doc.stag('br')
                 line('span', server_name + '>> ' + root_path + output_dir + '/out/' + model_name, klass="sub_title")
             # Statistics section
@@ -99,15 +97,18 @@ def performance_report(server_name, root_path, output_dir, working_folder_path, 
                 text('Series distribution in the training dataset:')
             for i in range(len(labels)):
                 doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'split', 'label_' + str(i) + '.png'), klass="chart_half_page")
-            # with tag('p', klass="new-page"):
-            #     text('Model metrics curves:')
+            with tag('p', klass="new-page"):
+                text('Model metrics curves:')
             # for i in range(len(metric_charts)):
             #     doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', str(metric_charts[i]) + '.png'), klass="chart_half_page")
-    
+                doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', 'training_curves.png'), klass="chart_full_page")
+   
     return doc
 
 
 def focused_performance_report(focus_labels, server_name, root_path, output_dir, working_folder_path, model_name, labels, metric_charts, log, total_count, FN_links, failed_expected_labels, failed_expected_counters, failed_detected_labels, failed_detected_counters):
+    
+    doc, tag, text, line = Doc().ttl()
     
     doc.asis('<!DOCTYPE html>')
     with tag('html'):
@@ -117,7 +118,7 @@ def focused_performance_report(focus_labels, server_name, root_path, output_dir,
             # header
             doc.stag('img', src=os.path.join(working_folder_path, 'img/logo.png'), klass="logo")
             with tag('div', klass="report_title"):
-                line('span', 'Model Performance Report / Focused', klass="title")
+                line('span', 'Focused Performance Report', klass="title")
                 doc.stag('br')
                 line('span', server_name + '>> ' + root_path + output_dir + '/out/' + model_name, klass="sub_title")
             # Statistics section

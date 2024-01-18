@@ -14,13 +14,12 @@ import os
 import sys
 import json
 
-print('#############################################"', sys.path)
 from report_publisher.templates import focused_performance_report
 
 doc, tag, text, line = Doc().ttl()
 
 def buildHTMLfile(html, root_path, output_dir, model_name):
-    html_file_name = os.path.join(root_path, output_dir, 'out', model_name, 'test', model_name + '_performance_report.html')
+    html_file_name = os.path.join(root_path, output_dir, 'out', model_name, 'test', model_name + '_performance_report_focused.html')
     f = open(html_file_name,'w')
     f.write(html)
     f.close()
@@ -97,7 +96,6 @@ def generate(path):
             full_path = str(test_results.loc[i, 'Path'])
             path_parts = full_path.split('/')
             StudyInstanceUID = path_parts[-3]
-            SeriesInstanceUID = path_parts[-2]
 
             # Get the database name corresponding to this DICOM directory
             database = ''

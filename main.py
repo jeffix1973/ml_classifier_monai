@@ -3,7 +3,8 @@ import train
 import test
 import datetime
 
-from report_publisher.model_performance_report_focused import generate
+import report_publisher.model_performance_report as report
+import report_publisher.model_performance_report_focused as focused_report
 
 def main():
     parser = argparse.ArgumentParser(description="Run training and/or testing.")
@@ -28,7 +29,8 @@ def main():
         # print duration in hours, minutes and seconds
         print('Testing duration: {}'.format(test_duration))
         print('Publishing reports...')
-        generate(args.json_path)
+        report.generate(args.json_path)
+        focused_report.generate(args.json_path)
         report_duration = datetime.datetime.now() - start_time
         # print duration in hours, minutes and seconds
         print('Report generation duration: {}'.format(report_duration))
