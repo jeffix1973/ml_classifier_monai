@@ -225,5 +225,5 @@ def focused_performance_report(focus_labels, server_name, root_path, output_dir,
                 text('Model metrics curves:')
             # for i in range(len(metric_charts)):
             #     doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', str(metric_charts[i]) + '.png'), klass="chart_half_page")
-                doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', 'training_curves.png'))
+                doc.stag('img', src=os.path.join(root_path, output_dir, 'out', model_name, 'train', 'training_curves.png'), klass="chart_full_page")
     return doc 

@@ -277,7 +277,6 @@ def printPDF(focus_labels, server_name, root_path, output_dir, log, working_fold
         '--margin-bottom' : '20mm',
         '--margin-left' : '15mm',
         '--margin-right' : '15mm',
-        '--page-size' : 'A4',
         '--enable-local-file-access' : None,
         '--header-html' : 'assets/header.html',
         '--footer-html' : 'assets/footer.html'

@@ -28,7 +28,11 @@ h1, h2, h3, h4, b {
     font-family: 'bold';
 }
 
-/* IMAGES */
+.stats b {
+    font-size: 1.2em;
+}
+
+/* TITLE AND LOGO */
 img.logo {
     display: inline-block;
     width: auto;
@@ -36,13 +40,27 @@ img.logo {
     margin-top: 0.5em;
 }
 
-img.chart_full_page {
-    display: block;
-    margin: auto;
-    width: 75%;
-    height: auto;
+.report_title {
+    margin-top: 0.5em;
+    display: inline-block;
+    width: 79%;
 }
 
+.report_title span.title {
+    display: block;
+    font-size: 2em;
+    font-family: 'bold';
+    padding-left: 1em;
+}
+
+.report_title span.sub_title {
+    display: block;
+    font-size: 0.6em;
+    padding-left: 2.5em;
+    font-style: italic;
+}
+
+/* IMAGES */
 .preview_wrapper {
     display: inline-block;
     margin: 0.1em;
@@ -104,27 +122,10 @@ img.chart_half_page {
     height: auto;
 }
 
-/* TITLE */
-.report_title {
-    display: inline-block;
-}
-
-.report_title span.title {
-    font-size: 3em;
-    font-family: 'bold';
-    padding-left: 1em;
-    vertical-align: center;
-}
-
-.report_title span.sub_title {
-    font-size: 1em;
+img.chart_full_page {
     display: block;
-    padding-left: 2.5em;
-    font-style: italic;
-}
-
-.stats b {
-    font-size: 1.2em;
+    margin-bottom: 0.5em;
+    width: 100%;
 }
 
 /* SPECIAL */
