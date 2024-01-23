@@ -50,6 +50,7 @@ def generate(path):
     file = json.load(f)
     VAR = file['report_publisher']
     VAR1 = file['class_monai_dcm']
+    VAR2 = file['bp_detection_inference_rest_api']
     print('>>>> Variables have been successfuly loaded...')
 
     server_name = VAR['server_name']
@@ -61,6 +62,9 @@ def generate(path):
     model_name = VAR['model_name']
     labels = VAR['labels']
     metric_charts = VAR['metric_charts']
+    DT = VAR2['DT']*100 
+    # round to 1 dec
+    DT = round(DT, 1)
     
     # Init variables
     total_count = 0
@@ -253,12 +257,16 @@ def generate(path):
 
         plt.savefig(os.path.join(root_path, output_dir, "out", model_name, "test", "roc_auc.png"), format='png', bbox_inches = 'tight')
         print('>>>> ', os.path.join(root_path, output_dir, "out", model_name, "test", "roc_auc.png"), 'has been saved...')
+        
+        # Sort FN Links in score order
+        sorter = lambda x: (x[4])
+        sorted_FN_links = sorted(FN_links, key=sorter, reverse=True)
     
         # Generate PDF file
-        printPDF(server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, FN_img_links, labels, metric_charts)
+        printPDF(server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, sorted_FN_links, FN_img_links, labels, metric_charts, report, DT)
 
 
-def printPDF(server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, FN_img_links, labels, metric_charts):
+def printPDF(server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, FN_img_links, labels, metric_charts, report, DT):
     
     # Get labals variables
     failed_expected_labels = []
@@ -289,7 +297,22 @@ def printPDF(server_name, root_path, output_dir, log, working_folder_path, model
             ind = failed_detected_labels.index(detected)
             failed_detected_counters[ind] += 1
 
-    document = performance_report(server_name, root_path, output_dir, working_folder_path, model_name, labels, metric_charts, log, total_count, FN_links, FN_img_links, failed_expected_labels, failed_expected_counters, failed_detected_labels, failed_detected_counters)
+    document = performance_report(
+        server_name, 
+        root_path, 
+        output_dir, 
+        working_folder_path, 
+        model_name, labels, 
+        metric_charts, log, 
+        total_count, FN_links, 
+        FN_img_links, 
+        failed_expected_labels, 
+        failed_expected_counters, 
+        failed_detected_labels, 
+        failed_detected_counters, 
+        report,
+        DT
+    )
     
     # Return clean indented variable
     html = indent(document.getvalue())

@@ -15,6 +15,7 @@ import sys
 import json
 
 from report_publisher.templates import focused_performance_report
+from report_publisher.templates import summary_performance_report
 
 doc, tag, text, line = Doc().ttl()
 
@@ -50,6 +51,7 @@ def generate(path):
     file = json.load(f)
     VAR = file['report_publisher']
     VAR1 = file['class_monai_dcm']
+    VAR2 = file['bp_detection_inference_rest_api']
     print('>>>> Variables have been successfuly loaded...')
 
     server_name = VAR['server_name']
@@ -62,6 +64,9 @@ def generate(path):
     labels = VAR['labels']
     focus_labels = VAR['focus_labels']
     metric_charts = VAR['metric_charts']
+    DT = VAR2['DT']*100
+    # round to 1 decimal
+    DT = round(DT, 1)
     
     # Init variables
     total_count = 0
@@ -227,10 +232,10 @@ def generate(path):
         sorted_FN_links = sorted(FN_links, key=sorter, reverse=True)
         
         # Generate PDF file
-        printPDF(focus_labels, server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, sorted_FN_links, labels, metric_charts)
+        printPDF(focus_labels, server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, sorted_FN_links, labels, metric_charts, report, DT)
 
 
-def printPDF(focus_labels, server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, labels, metric_charts):
+def printPDF(focus_labels, server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, labels, metric_charts, report, DT):
     
     # Get labals variables
     failed_expected_labels = []
@@ -261,13 +266,47 @@ def printPDF(focus_labels, server_name, root_path, output_dir, log, working_fold
             ind = failed_detected_labels.index(detected)
             failed_detected_counters[ind] += 1
 
-    document = focused_performance_report(focus_labels, server_name, root_path, output_dir, working_folder_path, model_name, labels, metric_charts, log, total_count, FN_links, failed_expected_labels, failed_expected_counters, failed_detected_labels, failed_detected_counters)
+    document_focused = focused_performance_report(
+        focus_labels, 
+        server_name, 
+        root_path, 
+        output_dir, 
+        working_folder_path, 
+        model_name, labels, 
+        metric_charts, log, 
+        total_count, FN_links, 
+        failed_expected_labels, 
+        failed_expected_counters, 
+        failed_detected_labels, 
+        failed_detected_counters, 
+        report, 
+        DT
+    )
+    
+    document_summary = summary_performance_report(
+        focus_labels, 
+        server_name, 
+        root_path, 
+        output_dir, 
+        working_folder_path, 
+        model_name, labels, 
+        metric_charts, log, 
+        total_count, FN_links, 
+        failed_expected_labels, 
+        failed_expected_counters, 
+        failed_detected_labels, 
+        failed_detected_counters, 
+        report, 
+        DT
+    )
     
     # Return clean indented variable
-    html = indent(document.getvalue())
+    html_focused = indent(document_focused.getvalue())
+    html_summary = indent(document_summary.getvalue())
     
     # Build and save to HTML file
-    html_file_name = buildHTMLfile(html, root_path, output_dir, model_name)
+    html_focused_file_name = buildHTMLfile(html_focused, root_path, output_dir, model_name)
+    html_summary_file_name = buildHTMLfile(html_summary, root_path, output_dir, model_name)
     
     # Generate PDF file
     options = { 
@@ -282,12 +321,14 @@ def printPDF(focus_labels, server_name, root_path, output_dir, log, working_fold
 
     # Test and create DIR
     test_and_create_dir(os.path.join(root_path, output_dir,'out', 'reports'))
-    pdf_file_name = os.path.join(root_path, output_dir, 'out', 'reports', model_name + '_performance_report_focused.pdf')
+    pdf_focused_file_name = os.path.join(root_path, output_dir, 'out', 'reports', model_name + '_performance_report_focused.pdf')
+    pdf_summary_file_name = os.path.join(root_path, output_dir, 'out', 'reports', model_name + '_performance_report_summary.pdf')
     
-    pdfkit.from_file(html_file_name, pdf_file_name, options=options, verbose=True)
-
-    print('>>>> Model performance report', pdf_file_name, 'has been generated...')
-
+    pdfkit.from_file(html_focused_file_name, pdf_focused_file_name, options=options, verbose=True)
+    print('>>>> Model performance report', pdf_focused_file_name, 'has been generated...')
+    
+    pdfkit.from_file(html_summary_file_name, pdf_summary_file_name, options=options, verbose=True)
+    print('>>>> Model performance report', pdf_summary_file_name, 'has been generated...')
     
 if __name__ == '__main__':
     

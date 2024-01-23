@@ -132,3 +132,19 @@ img.chart_full_page {
 .new-page {
     page-break-before: always;
 }
+
+/* CLASSIFICATION REPORT */
+table.classification-report {
+    width: 100% !important;
+    border-collapse: collapse;
+}
+
+table.classification-report td {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+table#classification-report td:first-child {
+    width: 30%;
+}
