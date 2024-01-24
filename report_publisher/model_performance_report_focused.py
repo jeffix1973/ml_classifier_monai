@@ -19,8 +19,8 @@ from report_publisher.templates import summary_performance_report
 
 doc, tag, text, line = Doc().ttl()
 
-def buildHTMLfile(html, root_path, output_dir, model_name):
-    html_file_name = os.path.join(root_path, output_dir, 'out', model_name, 'test', model_name + '_performance_report_focused.html')
+def buildHTMLfile(html, root_path, output_dir, model_name, type):
+    html_file_name = os.path.join(root_path, output_dir, 'out', model_name, 'test', model_name + '_performance_report_{}.html'.format(type))
     f = open(html_file_name,'w')
     f.write(html)
     f.close()
@@ -232,10 +232,10 @@ def generate(path):
         sorted_FN_links = sorted(FN_links, key=sorter, reverse=True)
         
         # Generate PDF file
-        printPDF(focus_labels, server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, sorted_FN_links, labels, metric_charts, report, DT)
+        printPDF(focus_labels, server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, sorted_FN_links, labels, metric_charts, report, DT, VAR1)
 
 
-def printPDF(focus_labels, server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, labels, metric_charts, report, DT):
+def printPDF(focus_labels, server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, labels, metric_charts, report, DT, settings):
     
     # Get labals variables
     failed_expected_labels = []
@@ -280,7 +280,8 @@ def printPDF(focus_labels, server_name, root_path, output_dir, log, working_fold
         failed_detected_labels, 
         failed_detected_counters, 
         report, 
-        DT
+        DT,
+        settings
     )
     
     document_summary = summary_performance_report(
@@ -297,7 +298,8 @@ def printPDF(focus_labels, server_name, root_path, output_dir, log, working_fold
         failed_detected_labels, 
         failed_detected_counters, 
         report, 
-        DT
+        DT,
+        settings
     )
     
     # Return clean indented variable
@@ -305,8 +307,8 @@ def printPDF(focus_labels, server_name, root_path, output_dir, log, working_fold
     html_summary = indent(document_summary.getvalue())
     
     # Build and save to HTML file
-    html_focused_file_name = buildHTMLfile(html_focused, root_path, output_dir, model_name)
-    html_summary_file_name = buildHTMLfile(html_summary, root_path, output_dir, model_name)
+    html_focused_file_name = buildHTMLfile(html_focused, root_path, output_dir, model_name, 'focused')
+    html_summary_file_name = buildHTMLfile(html_summary, root_path, output_dir, model_name, 'summary')
     
     # Generate PDF file
     options = { 

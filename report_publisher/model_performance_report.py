@@ -263,10 +263,10 @@ def generate(path):
         sorted_FN_links = sorted(FN_links, key=sorter, reverse=True)
     
         # Generate PDF file
-        printPDF(server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, sorted_FN_links, FN_img_links, labels, metric_charts, report, DT)
+        printPDF(server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, sorted_FN_links, FN_img_links, labels, metric_charts, report, DT, VAR1)
 
 
-def printPDF(server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, FN_img_links, labels, metric_charts, report, DT):
+def printPDF(server_name, root_path, output_dir, log, working_folder_path, model_name, total_count, FN_links, FN_img_links, labels, metric_charts, report, DT, settings):
     
     # Get labals variables
     failed_expected_labels = []
@@ -311,7 +311,8 @@ def printPDF(server_name, root_path, output_dir, log, working_folder_path, model
         failed_detected_labels, 
         failed_detected_counters, 
         report,
-        DT
+        DT,
+        settings
     )
     
     # Return clean indented variable
