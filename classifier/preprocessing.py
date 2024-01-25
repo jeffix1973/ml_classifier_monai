@@ -60,7 +60,7 @@ def apply_augmentation(image_tensor):
 
     # Define augmentations
     augmentations = Compose([
-        RandZoom(min_zoom=0.9, max_zoom=1.1, prob=0.3),
+        # RandZoom(min_zoom=0.9, max_zoom=1.1, prob=0.3),
         RandFlip(prob=0.3),
         RandRotate(range_x=np.pi/36, prob=0.3),
         RandAdjustContrast(prob=0.3, gamma=(0.8, 2), retain_stats=True),
